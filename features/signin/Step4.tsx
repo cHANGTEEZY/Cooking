@@ -1,9 +1,8 @@
 import React from "react";
 import StepHeader from "./components/StepHeader";
 import CustomInput from "@/components/CustomInput";
-import { useFormContext } from "react-hook-form";
+import { Controller, useFormContext } from "react-hook-form";
 import { signUpSchemaType } from "@/schema/auth-schema";
-import { error } from "console";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { eventTypes } from "./constant";
 
@@ -44,21 +43,28 @@ const Step4 = () => {
 
         <div className="space-y-4">
           <p>Preferences</p>
-          <ToggleGroup
-            type="multiple"
-            className="grid grid-cols-2 sm:grid-cols-3 gap-3"
-            {...register("preferences")}
-          >
-            {eventTypes.map((event) => (
-              <ToggleGroupItem
-                key={event.id}
-                value={event.title}
-                className="cursor-pointer p-3 rounded-2xl border"
+          <Controller
+            name="preferences"
+            render={({ field, fieldState: { error } }) => (
+              <ToggleGroup
+                type="multiple"
+                className="grid grid-cols-2 sm:grid-cols-3 gap-3"
+                value={field.value}
+                onValueChange={field.onChange}
               >
-                {event.title}
-              </ToggleGroupItem>
-            ))}
-          </ToggleGroup>
+                {eventTypes.map((event) => (
+                  <ToggleGroupItem
+                    key={event.id}
+                    value={event.title}
+                    className="cursor-pointer p-3 rounded-2xl border"
+                  >
+                    {event.title}
+                  </ToggleGroupItem>
+                ))}
+              </ToggleGroup>
+            )}
+          />
+
           {errors.preferences?.message && (
             <p className="text-red-500">{errors.preferences.message}</p>
           )}

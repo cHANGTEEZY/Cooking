@@ -7,6 +7,7 @@ type SignupState = {
   resetStep: () => void;
   otpCode: string;
   setOtpCode: (otpCode: string) => void;
+  clearStore: () => void;
 };
 
 export const useSignupState = create<SignupState>((set) => {
@@ -17,5 +18,6 @@ export const useSignupState = create<SignupState>((set) => {
     resetStep: () => set({ step: 1 }),
     otpCode: "",
     setOtpCode: (otpCode: string) => set({ otpCode: otpCode }),
+    clearStore: () => set({ step: 1, otpCode: "" }),
   };
 });

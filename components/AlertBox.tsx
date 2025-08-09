@@ -12,9 +12,13 @@ import React from "react";
 
 interface AlertBoxProps {
   showAlert: boolean;
-  setShowAlert: () => void;
+  setShowAlert: (show: boolean) => void;
   alertDescription: string;
   alertTitle: string;
+  onConfirm?: () => void;
+  onCancel?: () => void;
+  confirmText?: string;
+  cancelText?: string;
 }
 
 const AlertBox = ({
@@ -22,22 +26,38 @@ const AlertBox = ({
   setShowAlert,
   alertDescription,
   alertTitle,
+  onConfirm,
+  onCancel,
+  confirmText = "Continue",
+  cancelText = "Cancel",
 }: AlertBoxProps) => {
+  const handleCancel = () => {
+    setShowAlert(false);
+    onCancel?.();
+  };
+
+  const handleConfirm = () => {
+    setShowAlert(false);
+    onConfirm?.();
+  };
+
   return (
-    <div>
-      <AlertDialog open={showAlert} onOpenChange={setShowAlert}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>{alertTitle}</AlertDialogTitle>
-            <AlertDialogDescription>{alertDescription}</AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction>Continue</AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-    </div>
+    <AlertDialog open={showAlert} onOpenChange={setShowAlert}>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>{alertTitle}</AlertDialogTitle>
+          <AlertDialogDescription>{alertDescription}</AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel onClick={handleCancel}>
+            {cancelText}
+          </AlertDialogCancel>
+          <AlertDialogAction onClick={handleConfirm}>
+            {confirmText}
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
   );
 };
 
