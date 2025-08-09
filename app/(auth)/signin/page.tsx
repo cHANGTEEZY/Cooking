@@ -4,6 +4,7 @@ import React from "react";
 import Step1 from "@/features/signin/Step1";
 import Step2 from "@/features/signin/Step2";
 import Step3 from "@/features/signin/Step3";
+import Step4 from "@/features/signin/Step4";
 import { Button } from "@/components/ui/button";
 import { useForm, FormProvider, set } from "react-hook-form";
 import { useRouter } from "next/navigation";
@@ -11,9 +12,28 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { cn } from "@/lib/utils";
 import { signUpSchema, signUpSchemaType } from "@/schema/auth-schema";
 import { toast } from "sonner";
+import { CircleAlert } from "lucide-react";
+import { useSignupState } from "@/hooks/store/useSignupState";
+import { useSignUp } from "@clerk/nextjs";
+import Step5 from "@/features/signin/Step5";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import AlertBox from "@/components/AlertBox";
 
 const page = () => {
-  const [step, setStep] = React.useState(1);
+  const { step, incrementStep, decrementStep, setOtpCode } = useSignupState();
+  const { signUp } = useSignUp();
+  const [showAlert, setShowAlert] = React.useState(false);
+
   const router = useRouter();
 
   const methods = useForm<signUpSchemaType>({
@@ -37,6 +57,10 @@ const page = () => {
         return <Step2 />;
       case (step = 3):
         return <Step3 />;
+      case (step = 4):
+        return <Step4 />;
+      case (step = 5):
+        return <Step5 />;
       default:
         return <Step1 />;
     }
@@ -49,12 +73,25 @@ const page = () => {
       fieldsToValidate = ["firstName", "lastName", "email"];
     }
 
+    if (step === 2) {
+      fieldsToValidate = ["otpCode"];
+    }
+
     if (step === 3) {
+      fieldsToValidate = ["password", "confirmPassword"];
+    }
+
+    if (step === 4) {
+      fieldsToValidate = ["username", "phoneNumber", "preferences"];
+    }
+
+    if (step === 5) {
       console.log("Final step reached");
       return;
     }
 
     const validForm = await methods.trigger(fieldsToValidate);
+
     console.log(
       "Validating form fields:",
       fieldsToValidate,
@@ -66,47 +103,61 @@ const page = () => {
         description: "Please fill in all required fields correctly.",
         descriptionClassName: "text-sm",
         duration: 3000,
-        icon: "⚠️",
+        icon: <CircleAlert color="red" size={20} />,
       });
       return;
     }
 
-    setStep((prev) => prev + 1);
+    incrementStep(step);
   };
 
   const submitForm = (data: any) => {
     console.log("Form submitted", data);
-    router.push("/");
+    // router.push("/");
   };
 
   const handleDecrement = () => {
-    if (step === 1) return;
+    if (step === 1) {
+    }
+
+    if (step === 2) {
+      return (
+        <AlertBox
+          showAlert={showAlert}
+          setShowAlert={() => setShowAlert(true)}
+          alertTitle="Are you sure?"
+          alertDescription="You will need to reverify your email!"
+        />
+      );
+    }
+
     console.log("Decrementing step");
-    setStep((prev) => prev - 1);
+    decrementStep(step);
   };
 
-  const endReached = step === 3;
+  const endReached = step === 5;
 
   return (
     <FormProvider {...methods}>
-      <form onSubmit={methods.handleSubmit(submitForm)}>
-        {renderStep(step)}
-      </form>
-      {step !== 1 && (
-        <Button
-          onClick={handleDecrement}
-          // disabled={step === 1}
-          className={cn(step === 1 && "cursor-not-allowed")}
-        >
-          Previous
-        </Button>
-      )}
-      <Button
-        onClick={!endReached ? handleIncrement : submitForm}
-        type={"button"}
-      >
-        {!endReached ? "Next" : "Finish"}
-      </Button>
+      <section className="my-24 max-w-xs w-full mx-auto space-y-6 ">
+        <form onSubmit={methods.handleSubmit(submitForm)}>
+          {renderStep(step)}
+        </form>
+        <div className="flex gap-4">
+          {step !== 1 && (
+            <Button onClick={handleDecrement} className={cn("flex-1")}>
+              Previous
+            </Button>
+          )}
+          <Button
+            onClick={!endReached ? handleIncrement : submitForm}
+            type={"button"}
+            className={cn("flex-1")}
+          >
+            {!endReached ? "Next" : "Finish"}
+          </Button>
+        </div>
+      </section>
     </FormProvider>
   );
 };

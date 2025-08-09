@@ -2,6 +2,7 @@ import CustomInput from "@/components/CustomInput";
 import { signUpSchemaType } from "@/schema/auth-schema";
 import React from "react";
 import { useFormContext } from "react-hook-form";
+import StepHeader from "./components/StepHeader";
 
 const Step1 = () => {
   const {
@@ -11,6 +12,8 @@ const Step1 = () => {
 
   return (
     <div className="space-y-4">
+      <StepHeader Step={1} />
+
       <CustomInput
         {...register("firstName")}
         placeholder="Enter your first name"
