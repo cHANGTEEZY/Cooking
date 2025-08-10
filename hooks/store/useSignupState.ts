@@ -12,7 +12,7 @@ type SignupState = {
 
 export const useSignupState = create<SignupState>((set) => {
   return {
-    step: 1,
+    step: 2,
     incrementStep: (step: number) => set({ step: step + 1 }),
     decrementStep: (step: number) => set({ step: step - 1 }),
     resetStep: () => set({ step: 1 }),

@@ -5,13 +5,16 @@ import { sideBardata } from "@/features/signin/constant";
 import { CircleCheck, Mail } from "lucide-react";
 import { useSignupState } from "@/hooks/store/useSignupState";
 import { cn } from "@/lib/utils";
+import ProgressBar from "@/components/ProgressBar";
+import useIsMobile from "@/lib/useIsMobile";
 
 const AuthOnboardingLayout = ({ children }: { children: React.ReactNode }) => {
   const { step } = useSignupState();
+  const isMobile = useIsMobile();
 
   return (
     <section className="flex h-screen w-screen flex-col sm:flex-row">
-      <aside className="bg-sidebar h-screen w-full max-w-xs border-r p-4 flex flex-col ">
+      <aside className="hidden md:flex bg-sidebar h-screen w-full max-w-xs border-r p-4  flex-col ">
         <header className="mt-4">
           <h1 className="text-3xl font-bold mb-20">Event Finder</h1>
         </header>
@@ -65,7 +68,16 @@ const AuthOnboardingLayout = ({ children }: { children: React.ReactNode }) => {
           </span>
         </footer>
       </aside>
-      <main className="w-full flex-1">{children}</main>
+      <div className="flex-1 flex flex-col w-full">
+        <div
+          className={cn(
+            `md:hidden max-w-3xl w-full justify-center items-center  p-10 mt-10`
+          )}
+        >
+          <ProgressBar />
+        </div>
+        <main className="my-0 md:my-24 w-full flex-1">{children}</main>
+      </div>
     </section>
   );
 };
