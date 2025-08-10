@@ -17,6 +17,7 @@ import { useSignupState } from "@/hooks/store/useSignupState";
 import Step5 from "@/features/signin/Step5";
 import AlertBox from "@/components/AlertBox";
 import { useSignUp } from "@clerk/nextjs";
+import api from "@/lib/api";
 
 const page = () => {
   const {
@@ -167,10 +168,8 @@ const page = () => {
       try {
         const email = methods.getValues("email");
 
-        console.log("Creating signup attempt for email:", email);
-
         const otpCode = await getOtpCode(email);
-        setOtpCode(otpCode!);
+        setOtpCode(otpCode);
 
         toast.success("OTP sent!", {
           description: "Please check your email for the verification code.",
@@ -219,11 +218,14 @@ const page = () => {
       });
 
       if (result?.status === "complete") {
-        console.log("Signup completed successfully!");
-        toast.success("Account created!", {
-          description: "Your account has been created successfully.",
-          duration: 3000,
+        const userId = result.createdUserId || result.id;
+        console.log("Clerk user id is ", userId);
+
+        await api.post("/api/users", {
+          formData,
+          userId,
         });
+
         clearStore;
         router.push("/dashboard");
       } else {

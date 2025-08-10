@@ -11,19 +11,48 @@ const page = () => {
 
       <div className="container mx-auto px-4 py-16">
         <SignedOut>
-          <div className="text-center space-y-6">
-            <h1 className="text-4xl font-bold tracking-tight">
-              Welcome to Event Finder
-            </h1>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Discover amazing events in your area. Sign up to get started and
-              never miss out on the fun!
+          <div className="text-center space-y-8">
+            <div className="space-y-4">
+              <h1 className="text-5xl md:text-6xl font-black tracking-tight bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
+                Event Finder
+              </h1>
+              <p className="text-2xl font-light text-muted-foreground">
+                Discover Amazing Events
+              </p>
+            </div>
+            <p className="text-lg font-normal text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+              Connect with your community through unforgettable experiences.
+              Sign up to get started and never miss out on the fun!
             </p>
             <div className="flex gap-4 justify-center">
-              <Button size="lg">Get Started</Button>
-              <Button variant="outline" size="lg">
+              <Button size="lg" className="font-semibold">
+                Get Started
+              </Button>
+              <Button variant="outline" size="lg" className="font-medium">
                 Learn More
               </Button>
+            </div>
+
+            {/* Features section */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-16">
+              <div className="text-center space-y-2">
+                <h3 className="text-xl font-bold">🎉 Discover</h3>
+                <p className="text-sm font-medium text-muted-foreground">
+                  Find events that match your interests
+                </p>
+              </div>
+              <div className="text-center space-y-2">
+                <h3 className="text-xl font-bold">📅 Organize</h3>
+                <p className="text-sm font-medium text-muted-foreground">
+                  Create and manage your own events
+                </p>
+              </div>
+              <div className="text-center space-y-2">
+                <h3 className="text-xl font-bold">🤝 Connect</h3>
+                <p className="text-sm font-medium text-muted-foreground">
+                  Meet like-minded people in your area
+                </p>
+              </div>
             </div>
           </div>
         </SignedOut>

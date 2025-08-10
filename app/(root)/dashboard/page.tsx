@@ -6,11 +6,6 @@ const DashboardPage = async () => {
   // Get authentication info
   const { userId } = await auth();
 
-  // Redirect to sign-in if not authenticated
-  //   if (!userId) {
-  //     redirect("/sign-in");
-  //   }
-
   // Get current user info
   const user = await currentUser();
 
