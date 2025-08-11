@@ -1,45 +1,30 @@
-// lib/apiClient.ts
 import axios from "axios";
 
-const apiClient = axios.create({
-  baseURL: "http://localhost:3000",
-});
+// Function to create an API client instance with a token
+export const createAuthenticatedApiClient = (token: string | null) => {
+  const client = axios.create({
+    baseURL: process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000",
+  });
 
-// Request interceptor to add Clerk token
-apiClient.interceptors.request.use(
-  async (config) => {
-    try {
-      if (typeof window !== "undefined") {
-        const { useAuth } = await import("@clerk/nextjs");
-        const { getToken } = useAuth();
-        const token = await getToken();
+  if (token) {
+    client.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+  }
 
-        if (token && config.headers) {
-          config.headers.Authorization = `Bearer ${token}`;
+  client.interceptors.response.use(
+    (response) => response,
+    (error) => {
+      console.error("API Error:", error.response?.data || error.message);
+
+      if (error.response?.status === 401) {
+        console.log("Unauthorized! Redirecting to login...");
+        if (typeof window !== "undefined") {
+          window.location.href = "/signin";
         }
       }
-    } catch (error) {
-      console.error("Failed to get Clerk token", error);
-    }
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  }
-);
 
-// Response interceptor for global error handling
-apiClient.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    if (error.response?.status === 401) {
-      // Unauthorized — handle logout or redirect
-      console.log("Unauthorized! Redirecting to login...");
-      // For example, redirect to sign in page
-      window.location.href = "/sign-in";
+      return Promise.reject(error);
     }
-    return Promise.reject(error);
-  }
-);
+  );
 
-export default apiClient;
+  return client;
+};

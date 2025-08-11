@@ -1,7 +1,10 @@
 import React from "react";
+import { useForm } from "react-hook-form";
 
 const page = () => {
-  return <div>page</div>;
+  const {} = useForm();
+
+  return <div></div>;
 };
 
 export default page;

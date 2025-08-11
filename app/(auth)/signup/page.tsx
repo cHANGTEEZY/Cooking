@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Step1 from "@/features/signin/Step1";
 import Step2 from "@/features/signin/Step2";
 import Step3 from "@/features/signin/Step3";
@@ -16,8 +16,9 @@ import { CircleAlert } from "lucide-react";
 import { useSignupState } from "@/hooks/store/useSignupState";
 import Step5 from "@/features/signin/Step5";
 import AlertBox from "@/components/AlertBox";
-import { useSignUp } from "@clerk/nextjs";
-import api from "@/lib/api";
+import { useSignUp, useAuth, useClerk } from "@clerk/nextjs";
+
+import { createUser } from "@/lib/api";
 
 const page = () => {
   const {
@@ -28,10 +29,13 @@ const page = () => {
     otpCode,
     clearStore,
   } = useSignupState();
-  const [showAlert, setShowAlert] = React.useState(false);
+  const [showAlert, setShowAlert] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
   const { signUp } = useSignUp();
+  const { getToken } = useAuth();
+  const { setActive } = useClerk();
 
   const getOtpCode = async (email: string) => {
     try {
@@ -128,6 +132,8 @@ const page = () => {
     }
   };
 
+  const endReached = step === 5;
+
   const handleIncrement = async () => {
     let fieldsToValidate = [] as any;
 
@@ -167,7 +173,7 @@ const page = () => {
     if (step === 1) {
       try {
         const email = methods.getValues("email");
-
+        setIsLoading(true);
         const otpCode = await getOtpCode(email);
         setOtpCode(otpCode);
 
@@ -175,6 +181,7 @@ const page = () => {
           description: "Please check your email for the verification code.",
           duration: 3000,
         });
+        setIsLoading(false);
       } catch (error) {
         console.error("Failed to send OTP:", error);
         return;
@@ -204,47 +211,6 @@ const page = () => {
     incrementStep(step);
   };
 
-  const submitForm = async () => {
-    try {
-      const formData = methods.getValues();
-      console.log("Completing signup with data:", formData);
-
-      const result = await signUp?.update({
-        password: formData.password,
-        firstName: formData.firstName,
-        lastName: formData.lastName,
-
-        ...(formData.username && { username: formData.username }),
-      });
-
-      if (result?.status === "complete") {
-        const userId = result.createdUserId || result.id;
-        console.log("Clerk user id is ", userId);
-
-        await api.post("/api/users", {
-          formData,
-          userId,
-        });
-
-        clearStore;
-        router.push("/dashboard");
-      } else {
-        console.log("Signup still incomplete:", result?.status);
-        console.log("Missing fields:", result?.missingFields);
-        toast.error("Signup incomplete", {
-          description: "Please complete all required fields.",
-          duration: 3000,
-        });
-      }
-    } catch (error) {
-      console.error("Error completing signup:", error);
-      toast.error("Signup failed", {
-        description: "Failed to create account. Please try again.",
-        duration: 3000,
-      });
-    }
-  };
-
   const handleDecrement = () => {
     if (step === 1) {
       return;
@@ -259,6 +225,96 @@ const page = () => {
     decrementStep(step);
   };
 
+  const submitForm = async () => {
+    try {
+      setIsLoading(true);
+      const formData = methods.getValues();
+      console.log("Completing signup with data:", formData);
+
+      const result = await signUp?.update({
+        password: formData.password,
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        ...(formData.username && { username: formData.username }),
+      });
+
+      console.log("Clerk signup result:", result);
+
+      if (result?.status === "complete") {
+        const userId = result.createdUserId || result.id;
+        console.log("Clerk user id is:", userId);
+
+        if (!userId) {
+          throw new Error("Failed to get user ID from Clerk");
+        }
+
+        await setActive({ session: result.createdSessionId });
+        console.log("User signed in successfully");
+
+        const token = await getToken();
+        console.log("Got Clerk token:", token ? "✓" : "No token");
+
+        if (token) {
+          const userData = {
+            userId,
+            email: formData.email,
+            firstName: formData.firstName,
+            lastName: formData.lastName,
+            username: formData.username,
+          };
+
+          console.log("Sending user data to backend:", userData);
+
+          try {
+            const backendResponse = await createUser(userData, token);
+            console.log(backendResponse);
+          } catch (backendError) {
+            console.error(
+              "Backend error (but user created in Clerk):",
+              backendError
+            );
+          }
+        }
+
+        toast.success("Account created successfully!", {
+          description: "Welcome to Event Finder!",
+          duration: 3000,
+        });
+
+        clearStore();
+
+        // Redirect to dashboard
+        router.push("/dashboard");
+      } else {
+        console.log("Signup still incomplete:", result?.status);
+        console.log("Missing fields:", result?.missingFields);
+        console.log("Unverified fields:", result?.unverifiedFields);
+
+        toast.error("Signup incomplete", {
+          description: `Status: ${result?.status}. Missing: ${
+            result?.missingFields?.join(", ") || "unknown"
+          }`,
+          duration: 5000,
+        });
+      }
+    } catch (error: any) {
+      console.error("Error completing signup:", error);
+      let errorMessage = "Failed to create account. Please try again.";
+      if (error?.errors?.[0]?.message) {
+        errorMessage = error.errors[0].message;
+      } else if (error?.message) {
+        errorMessage = error.message;
+      }
+
+      toast.error("Signup failed", {
+        description: errorMessage,
+        duration: 5000,
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const confirmGoBack = () => {
     console.log("User confirmed going back - will need to reverify email");
     decrementStep(step);
@@ -267,8 +323,6 @@ const page = () => {
   const cancelGoBack = () => {
     console.log("User cancelled going back");
   };
-
-  const endReached = step === 5;
 
   return (
     <FormProvider {...methods}>
@@ -288,6 +342,7 @@ const page = () => {
             onClick={!endReached ? handleIncrement : submitForm}
             type="button"
             className={cn("flex-1")}
+            disabled={isLoading}
           >
             {!endReached ? "Next" : "Finish"}
           </Button>

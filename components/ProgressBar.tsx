@@ -3,6 +3,7 @@ import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { useSignupState } from "@/hooks/store/useSignupState";
 import { cn } from "@/lib/utils";
+import useIsScreenReisze from "@/lib/useIsScreenReisze";
 
 const Step = ({
   stepNumber,
@@ -29,6 +30,7 @@ const ProgressBar = () => {
 
   const containerRef = useRef<HTMLDivElement>(null);
   const barRef = useRef<HTMLDivElement>(null);
+  const { screenResized } = useIsScreenReisze();
 
   useGSAP(
     () => {
@@ -45,7 +47,7 @@ const ProgressBar = () => {
         });
       }
     },
-    { dependencies: [step] }
+    { dependencies: [step, screenResized] }
   );
 
   return (

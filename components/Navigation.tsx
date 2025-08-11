@@ -20,12 +20,6 @@ const Navigation = () => {
         </Link>
 
         <div className="flex items-center gap-4">
-          <SignedIn>
-            <Link href="/dashboard">
-              <Button variant="ghost">Dashboard</Button>
-            </Link>
-          </SignedIn>
-
           <SignedOut>
             <SignInButton mode="modal">
               <Button variant="ghost">Sign In</Button>
