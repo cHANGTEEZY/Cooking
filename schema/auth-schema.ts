@@ -9,6 +9,17 @@ export const baseAuthSchema = z.object({
   password: z.string().min(1, "Password is required"),
 });
 
+export const signInSchema = z
+  .object({
+    email: z.string().optional(),
+    username: z.string().optional(),
+    password: z.string().min(1, "Password is required"),
+  })
+  .refine((data) => data.email || data.username, {
+    message: "Please enter either email or username",
+    path: ["username"],
+  });
+
 export const signUpSchema = baseAuthSchema
   .extend({
     firstName: z
@@ -51,4 +62,5 @@ export const signUpSchema = baseAuthSchema
     path: ["confirmPassword"],
   });
 
+export type signInSchemaType = z.infer<typeof signInSchema>;
 export type signUpSchemaType = z.infer<typeof signUpSchema>;

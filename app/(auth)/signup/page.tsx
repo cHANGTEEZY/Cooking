@@ -1,22 +1,22 @@
 "use client";
 
-import React, { useState } from "react";
+import AlertBox from "@/components/AlertBox";
+import { Button } from "@/components/ui/button";
 import Step1 from "@/features/signin/Step1";
 import Step2 from "@/features/signin/Step2";
 import Step3 from "@/features/signin/Step3";
 import Step4 from "@/features/signin/Step4";
-import { Button } from "@/components/ui/button";
-import { useForm, FormProvider } from "react-hook-form";
-import { useRouter } from "next/navigation";
-import { zodResolver } from "@hookform/resolvers/zod";
+import Step5 from "@/features/signin/Step5";
+import { useSignupState } from "@/hooks/store/useSignupState";
 import { cn } from "@/lib/utils";
 import { signUpSchema, signUpSchemaType } from "@/schema/auth-schema";
-import { toast } from "sonner";
+import { useAuth, useClerk, useSignUp } from "@clerk/nextjs";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { CircleAlert } from "lucide-react";
-import { useSignupState } from "@/hooks/store/useSignupState";
-import Step5 from "@/features/signin/Step5";
-import AlertBox from "@/components/AlertBox";
-import { useSignUp, useAuth, useClerk } from "@clerk/nextjs";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { FormProvider, useForm } from "react-hook-form";
+import { toast } from "sonner";
 
 import { createUser } from "@/lib/api";
 

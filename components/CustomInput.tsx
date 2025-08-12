@@ -44,14 +44,19 @@ const CustomInput = ({
 
       <div
         className={cn(
-          "flex items-center rounded-md border px-3",
+          "flex items-center rounded-lg border-2 border-border/60 bg-background/50 dark:bg-card/40 backdrop-blur-sm shadow-md transition-all duration-200",
           error && "border-red-500"
         )}
       >
-        {icon && <span className="mr-2 text-gray-500">{icon}</span>}
+        {icon && (
+          <span className="ml-3 mr-2 text-muted-foreground">{icon}</span>
+        )}
         <Input
           type={inputType}
-          className={cn("border-0 p-0 focus-visible:ring-0", inputStyle)}
+          className={cn(
+            "border-0 bg-transparent p-2 focus-visible:ring-0 shadow-none",
+            inputStyle
+          )}
           placeholder={placeholder}
           value={value}
           onChange={onChange}
