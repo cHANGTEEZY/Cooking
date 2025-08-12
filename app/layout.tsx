@@ -4,6 +4,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { ClerkProvider } from "@clerk/nextjs";
 import { switzer, switzerFallback, mono } from "@/lib/fonts";
 import "./globals.css";
+import { Analytics } from "@vercel/analytics/next";
 
 export const metadata: Metadata = {
   title: "Event Finder - Discover Amazing Events",
@@ -28,6 +29,7 @@ export default function RootLayout({
             disableTransitionOnChange
           >
             <main>{children}</main>
+            <Analytics />
             <Toaster richColors position="top-right" />
           </ThemeProvider>
         </body>
