@@ -21,12 +21,12 @@ const Navigation = () => {
 
         <div className="flex items-center gap-4">
           <SignedOut>
-            <SignInButton mode="modal">
+            <Link href={"/signin"}>
               <Button variant="ghost">Sign In</Button>
-            </SignInButton>
-            <SignUpButton mode="modal">
+            </Link>
+            <Link href={"/signup"}>
               <Button>Sign Up</Button>
-            </SignUpButton>
+            </Link>
           </SignedOut>
 
           <SignedIn>
