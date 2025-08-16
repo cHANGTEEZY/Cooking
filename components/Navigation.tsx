@@ -7,6 +7,8 @@ import {
 } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import MovingNavigation from "./MovingNavigation";
+import { ModeToggle } from "./ModeToggle";
 
 const Navigation = () => {
   return (
@@ -18,6 +20,10 @@ const Navigation = () => {
         >
           Event Finder
         </Link>
+
+        <MovingNavigation navData={dummyNavData} />
+
+        <ModeToggle />
 
         <div className="flex items-center gap-4">
           <SignedOut>
@@ -45,3 +51,26 @@ const Navigation = () => {
 };
 
 export default Navigation;
+
+const dummyNavData = [
+  {
+    name: "Home",
+    href: "/",
+    title: "Home",
+  },
+  {
+    name: "Events",
+    href: "/events",
+    title: "Events",
+  },
+  {
+    name: "About",
+    href: "/about",
+    title: "About",
+  },
+  {
+    name: "Contact",
+    href: "/contact",
+    title: "Contact",
+  },
+];

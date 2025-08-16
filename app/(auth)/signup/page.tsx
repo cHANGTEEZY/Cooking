@@ -7,7 +7,7 @@ import Step2 from "@/features/signin/Step2";
 import Step3 from "@/features/signin/Step3";
 import Step4 from "@/features/signin/Step4";
 import Step5 from "@/features/signin/Step5";
-import { useSignupState } from "@/hooks/store/useSignupState";
+import { useMultiFormStepState } from "@/hooks/store/useMultiFormState";
 import { cn } from "@/lib/utils";
 import { signUpSchema, signUpSchemaType } from "@/schema/auth-schema";
 import { useAuth, useClerk, useSignUp } from "@clerk/nextjs";
@@ -28,9 +28,10 @@ const page = () => {
     setOtpCode,
     otpCode,
     clearStore,
-  } = useSignupState();
+  } = useMultiFormStepState();
   const [showAlert, setShowAlert] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isRedirecting, setIsRedirecting] = useState(false);
   const router = useRouter();
 
   const { signUp } = useSignUp();
@@ -185,6 +186,8 @@ const page = () => {
       } catch (error) {
         console.error("Failed to send OTP:", error);
         return;
+      } finally {
+        setIsLoading(false);
       }
     }
 
@@ -281,9 +284,10 @@ const page = () => {
           duration: 3000,
         });
 
-        clearStore();
+        // Set redirecting state to prevent UI flashing
+        setIsRedirecting(true);
 
-        // Redirect to dashboard
+        // Redirect to dashboard - no need to clear store since we're leaving
         router.push("/dashboard");
       } else {
         console.log("Signup still incomplete:", result?.status);

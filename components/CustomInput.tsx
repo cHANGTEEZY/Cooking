@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 
 interface CustomInputProps {
   inputType: React.HTMLInputTypeAttribute;
+  containerStyle?: React.HTMLAttributes<HTMLDivElement>["className"];
   label?: string;
   labelFor?: string;
   error?: string;
@@ -19,6 +20,7 @@ interface CustomInputProps {
 
 const CustomInput = ({
   inputType,
+  containerStyle,
   label,
   labelFor,
   error,
@@ -32,7 +34,7 @@ const CustomInput = ({
   ...rest
 }: CustomInputProps) => {
   return (
-    <div className="space-y-4">
+    <div className={cn("space-y-4", containerStyle)}>
       {label && (
         <Label
           htmlFor={labelFor}

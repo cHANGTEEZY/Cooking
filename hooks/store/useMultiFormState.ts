@@ -1,6 +1,6 @@
 import { create } from "zustand";
 
-type SignupState = {
+type MultiFormStepState = {
   step: number;
   incrementStep: (step: number) => void;
   decrementStep: (step: number) => void;
@@ -10,7 +10,7 @@ type SignupState = {
   clearStore: () => void;
 };
 
-export const useSignupState = create<SignupState>((set) => {
+export const useMultiFormStepState = create<MultiFormStepState>((set) => {
   return {
     step: 1,
     incrementStep: (step: number) => set({ step: step + 1 }),

@@ -1,9 +1,9 @@
 import React, { useRef } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
-import { useSignupState } from "@/hooks/store/useSignupState";
+import { useMultiFormStepState } from "@/hooks/store/useMultiFormState";
 import { cn } from "@/lib/utils";
-import useIsScreenReisze from "@/lib/useIsScreenReisze";
+import useIsScreenReisze from "@/hooks/utils/useIsScreenReisze";
 
 const Step = ({
   stepNumber,
@@ -26,7 +26,7 @@ const Step = ({
 };
 
 const ProgressBar = () => {
-  const { step } = useSignupState();
+  const { step } = useMultiFormStepState();
 
   const containerRef = useRef<HTMLDivElement>(null);
   const barRef = useRef<HTMLDivElement>(null);
@@ -34,9 +34,19 @@ const ProgressBar = () => {
 
   useGSAP(
     () => {
-      if (containerRef.current && barRef.current) {
-        const containerWidth =
-          containerRef.current.getBoundingClientRect().width;
+      if (!containerRef.current || !barRef.current) {
+        console.warn("ProgressBar refs not ready");
+        return;
+      }
+
+      try {
+        const containerRect = containerRef.current.getBoundingClientRect();
+        if (!containerRect) {
+          console.warn("Container getBoundingClientRect returned null");
+          return;
+        }
+
+        const containerWidth = containerRect.width;
         const totalSteps = 5;
         const progressWidth = ((step - 1) / (totalSteps - 1)) * containerWidth;
 
@@ -45,6 +55,8 @@ const ProgressBar = () => {
           duration: 0.6,
           ease: "power2.out",
         });
+      } catch (error) {
+        console.error("Error in ProgressBar GSAP animation:", error);
       }
     },
     { dependencies: [step, screenResized] }

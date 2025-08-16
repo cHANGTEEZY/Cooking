@@ -3,13 +3,13 @@
 import React from "react";
 import { sideBardata } from "@/features/signin/constant";
 import { CircleCheck, Mail } from "lucide-react";
-import { useSignupState } from "@/hooks/store/useSignupState";
+import { useMultiFormStepState } from "@/hooks/store/useMultiFormState";
 import { cn } from "@/lib/utils";
 import ProgressBar from "@/components/ProgressBar";
 import useIsMobile from "@/lib/useIsMobile";
 
 const AuthOnboardingLayout = ({ children }: { children: React.ReactNode }) => {
-  const { step } = useSignupState();
+  const { step } = useMultiFormStepState();
   const isMobile = useIsMobile();
 
   return (
