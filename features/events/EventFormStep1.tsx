@@ -2,12 +2,24 @@ import React from "react";
 import EventFormHeader from "./components/EventFormHeader";
 import CustomInput from "@/components/CustomInput";
 import { CustomDatePicker } from "@/components/CustomDatePicker";
-import { useFormContext } from "react-hook-form";
+import { Controller, useFormContext } from "react-hook-form";
 import { EventSchemaType } from "@/schema/event-schema";
+import CustomSelect from "@/components/CustomSelect";
+
+const selectOptions = [
+  { value: "Music", label: "Music" },
+  { value: "Festival", label: "Festival" },
+  { value: "Theater", label: "Theater" },
+  { value: "Comedy", label: "Comedy" },
+  { value: "Exhibition", label: "Exhibition" },
+  { value: "Conference", label: "Conference" },
+  { value: "Workshop", label: "Workshop" },
+];
 
 const EventFormStep1 = () => {
   const {
     register,
+    control,
     formState: { errors },
   } = useFormContext<EventSchemaType>();
 
@@ -35,12 +47,16 @@ const EventFormStep1 = () => {
           placeholder="Enter your event description"
         />
 
-        <CustomInput
-          {...register("eventCategory")}
-          inputType="text"
-          label="Event Category"
-          error={errors.eventCategory?.message}
-          placeholder="Enter your event category"
+        <Controller
+          name="eventCategory"
+          control={control}
+          render={({ field }) => (
+            <CustomSelect
+              {...field}
+              selectContents={selectOptions}
+              error={errors.eventCategory?.message}
+            />
+          )}
         />
 
         <div className="flex w-full gap-5">
@@ -64,18 +80,30 @@ const EventFormStep1 = () => {
         </div>
 
         <div className="flex w-full gap-5">
-          <CustomDatePicker
-            {...register("eventStartDate")}
-            label="Event Start Date"
-            error={errors.eventStartDate?.message}
-            containerStyles="flex-1/2"
+          <Controller
+            name="eventStartDate"
+            control={control}
+            render={({ field }) => (
+              <CustomDatePicker
+                {...field}
+                label="Event Start Date"
+                error={errors.eventStartDate?.message}
+                containerStyles="flex-1/2"
+              />
+            )}
           />
 
-          <CustomDatePicker
-            {...register("eventEndDate")}
-            label="Event End Date"
-            error={errors.eventEndDate?.message}
-            containerStyles="flex-1/2"
+          <Controller
+            name="eventEndDate"
+            control={control}
+            render={({ field }) => (
+              <CustomDatePicker
+                {...field}
+                label="Event End Date"
+                error={errors.eventEndDate?.message}
+                containerStyles="flex-1/2"
+              />
+            )}
           />
         </div>
       </div>

@@ -27,6 +27,7 @@ const eventSchema = z
     eventStartDate: z.date().refine((date) => date > new Date(), {
       message: "Event start date must be in the future",
     }),
+    //this date should be in format August 25th,2025 etc
     eventEndDate: z.date(),
     eventDescription: z
       .string()

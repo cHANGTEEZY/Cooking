@@ -78,8 +78,11 @@ const page = () => {
 
       if (fieldsToValidate.length > 0) {
         const isValid = await methods.trigger(fieldsToValidate);
+
         if (!isValid) {
           toast.error("Please fill in all required fields");
+
+          console.log("Validation failed for fields:", fieldsToValidate);
           return;
         }
       }
