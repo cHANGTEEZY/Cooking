@@ -11,26 +11,12 @@ import { FormProvider, useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import eventSchema, { EventSchemaType } from "@/schema/event-schema";
 import { toast } from "sonner";
+import { BorderBeam } from "@/components/magicui/border-beam";
 
 const page = () => {
   const [popoverContent, setPopoverContent] = React.useState("");
   const { step, incrementStep, decrementStep } = useEventFormState();
   const methods = useForm<EventSchemaType>({
-    defaultValues: {
-      eventTitle: "",
-      eventNames: "",
-      eventCategory: "Music",
-      organizerName: "",
-      organizerContactInfo: "",
-      eventStartDate: undefined,
-      eventEndDate: undefined,
-      eventDescription: "",
-      eventLocation: "",
-      eventPrice: "",
-      eventImage: "",
-      eventImageAlt: "",
-      eventDate: "",
-    },
     mode: "onChange",
     reValidateMode: "onChange",
     resolver: zodResolver(eventSchema),
@@ -63,24 +49,24 @@ const page = () => {
       let fieldsToValidate = [] as (keyof EventSchemaType)[];
 
       if (step === 1) {
-        fieldsToValidate = [
-          "eventTitle",
-          "eventNames",
-          "eventDescription",
-          "eventLocation",
-          "eventCategory",
-          "organizerName",
-          "organizerContactInfo",
-          "eventStartDate",
-          "eventEndDate",
-        ];
+        // fieldsToValidate = [
+        //   "eventTitle",
+        //   "eventDescription",
+        //   "eventCategory",
+        //   "organizerName",
+        //   "organizerContactInfo",
+        //   "eventStartDate",
+        //   "eventEndDate",
+        // ];
       }
 
       if (fieldsToValidate.length > 0) {
         const isValid = await methods.trigger(fieldsToValidate);
 
         if (!isValid) {
-          toast.error("Please fill in all required fields");
+          toast.error("Validation Error", {
+            description: `Please fill in all required fields for ${fieldsToValidate} .`,
+          });
 
           console.log("Validation failed for fields:", fieldsToValidate);
           return;
@@ -88,6 +74,7 @@ const page = () => {
       }
 
       console.log("Handle increment clicked, current step:", step);
+      if (step === 2) return;
       incrementStep();
     } catch (error) {
       console.error("Error in handleIncrement:", error);
@@ -112,17 +99,23 @@ const page = () => {
             <h1 className="text-3xl font-bold text-foreground mb-2">
               Create Event
             </h1>
-            <p className="text-muted-foreground">Step {step} of 4</p>
+            <p className="text-muted-foreground">Step {step} of 2</p>
 
             <div className="w-full bg-muted rounded-full h-2 mt-4">
               <div
                 className="bg-primary h-2 rounded-full transition-all duration-300"
-                style={{ width: `${(step / 4) * 100}%` }}
+                style={{ width: `${(step / 2) * 100}%` }}
               />
             </div>
           </div>
 
           <div className="bg-card/50 backdrop-blur-sm border border-border/50 rounded-xl p-6 shadow-lg">
+            <BorderBeam
+              size={400}
+              duration={7}
+              borderWidth={2}
+              className="from-transparent via-red-500 to-transparent"
+            />
             <form onSubmit={methods.handleSubmit(handleSubmitEvent)}>
               {renderStep(step)}
 
@@ -139,9 +132,9 @@ const page = () => {
                 <Button
                   onClick={handleIncrement}
                   className="flex-1"
-                  type={step === 4 ? "submit" : "button"}
+                  type={step === 2 ? "submit" : "button"}
                 >
-                  {step < 4 ? "Next" : "Submit"}
+                  {step < 2 ? "Next" : "Submit"}
                 </Button>
               </div>
             </form>

@@ -32,8 +32,6 @@ const LoginPage = () => {
     if (!signIn) return;
 
     try {
-      console.log("Form data:", data);
-
       const identifier = data.username! || data.email!;
 
       const result = await signIn.create({

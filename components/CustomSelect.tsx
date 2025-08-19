@@ -10,22 +10,24 @@ import {
 
 interface CustomSelectProps {
   error?: string;
+  label: string;
   selectContents: { value: string; label: string }[];
   value?: string;
   onChange?: (value: string) => void;
 }
 
 const CustomSelect = ({
+  label,
   error,
   selectContents,
   value,
   onChange,
 }: CustomSelectProps) => {
   return (
-    <div className="space-y-4">
-      <Label>Event Category</Label>
+    <div className="space-y-4 w-full ">
+      <Label>{label}</Label>
       <Select value={value} onValueChange={onChange}>
-        <SelectTrigger className="w-full">
+        <SelectTrigger className="w-full h-80">
           <SelectValue placeholder="Select Event Category" />
         </SelectTrigger>
         <SelectContent>

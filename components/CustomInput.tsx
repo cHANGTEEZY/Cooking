@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Label } from "./ui/label";
 import { Input } from "./ui/input";
 import { cn } from "@/lib/utils";
@@ -33,6 +33,8 @@ const CustomInput = ({
   icon,
   ...rest
 }: CustomInputProps) => {
+  const [selectedImage, setSelectedImage] = useState<File | null>(null);
+
   return (
     <div className={cn("space-y-4", containerStyle)}>
       {label && (
@@ -53,6 +55,7 @@ const CustomInput = ({
         {icon && (
           <span className="ml-3 mr-2 text-muted-foreground">{icon}</span>
         )}
+
         <Input
           type={inputType}
           className={cn(

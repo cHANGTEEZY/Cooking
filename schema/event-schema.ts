@@ -6,12 +6,7 @@ const eventSchema = z
       .string()
       .min(4, "Event title must be at least 4 characters")
       .max(20, "Event title must be max of 20 characters"),
-    eventNames: z
-      .string()
-      .min(4, "Event name must be at least 4 characters") // Fixed: was 40
-      .max(50, "Event name must be max of 50 characters"), // Fixed: was 20
     eventCategory: z.enum([
-      // Fixed: was "evntCategory"
       "Music",
       "Festival",
       "Theater",
@@ -20,27 +15,26 @@ const eventSchema = z
       "Conference",
       "Workshop",
     ]),
-    organizerName: z.string().min(1, "Organizer name is required"),
-    organizerContactInfo: z
-      .string()
-      .min(1, "Organizer contact info is required"),
+    eventVenue: z.string().min(1, "Event venue is required"),
+    eventLocation: z.string().min(1, "Event location is required"),
     eventStartDate: z.date().refine((date) => date > new Date(), {
       message: "Event start date must be in the future",
     }),
-    //this date should be in format August 25th,2025 etc
     eventEndDate: z.date(),
     eventDescription: z
       .string()
       .min(10, "Event description must be at least 10 characters"),
-    eventLocation: z.string().min(1, "Event location is required"),
-    eventPrice: z.string().min(1, "Event price is required"),
+
+    //Event Type
+    ticketType: z.enum(["free", "paid"]),
+    ticketPrice: z.string().min(1, "Ticket price is required"),
+    ticketQuantity: z.string().min(1, "Ticket quantity is required"),
     eventImage: z
-      .string()
-      .url("Event image must be a valid URL")
-      .optional()
-      .or(z.literal("")),
-    eventImageAlt: z.string().min(1, "Event image alt text is required"),
-    eventDate: z.string().min(1, "Event date is required"),
+      .instanceof(File)
+      .refine((file) =>
+        ["image/jpeg", "image/png", "image/jpg"].includes(file.type)
+      ),
+    eventVideo: z.string().url("Event video must be a valid URL").optional(),
   })
   .refine(
     (data) => {

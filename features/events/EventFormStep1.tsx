@@ -53,6 +53,7 @@ const EventFormStep1 = () => {
           render={({ field }) => (
             <CustomSelect
               {...field}
+              label="Event Category"
               selectContents={selectOptions}
               error={errors.eventCategory?.message}
             />
@@ -61,20 +62,20 @@ const EventFormStep1 = () => {
 
         <div className="flex w-full gap-5">
           <CustomInput
-            {...register("eventLocation")}
+            {...register("eventVenue")}
             inputType="text"
-            label="Organizer Name"
-            error={errors.eventLocation?.message}
-            placeholder="Enter organizer name"
+            label="Event venue"
+            error={errors.eventVenue?.message}
+            placeholder="Enter Venue name"
             containerStyle="flex-1/2 "
           />
 
           <CustomInput
-            {...register("organizerContactInfo")}
+            {...register("eventLocation")}
             inputType="text"
-            label="Organizer Contact Info"
-            error={errors.organizerContactInfo?.message}
-            placeholder="Enter organizer contact info"
+            label="Event Location"
+            error={errors.eventLocation?.message}
+            placeholder="Enter event location ex:(City, Country)"
             containerStyle="flex-1/2 "
           />
         </div>

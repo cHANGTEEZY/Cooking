@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import MovingNavigation from "./MovingNavigation";
 import { ModeToggle } from "./ModeToggle";
+import { BorderBeam } from "./magicui/border-beam";
 
 const Navigation = () => {
   return (
@@ -23,9 +24,8 @@ const Navigation = () => {
 
         <MovingNavigation navData={dummyNavData} />
 
-        <ModeToggle />
-
         <div className="flex items-center gap-4">
+          <ModeToggle />
           <SignedOut>
             <Link href={"/signin"}>
               <Button variant="ghost">Sign In</Button>
