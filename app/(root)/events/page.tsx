@@ -4,17 +4,15 @@ import React from "react";
 import { Button } from "@/components/ui/button";
 import EventFormStep1 from "@/features/events/EventFormStep1";
 import EventFormStep2 from "@/features/events/EventFormStep2";
-import EventFormStep3 from "@/features/events/EventFormStep3";
-import EventFormStep4 from "@/features/events/EventFormStep4";
 import { useEventFormState } from "@/hooks/store/useEventFormState";
 import { FormProvider, useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import eventSchema, { EventSchemaType } from "@/schema/event-schema";
 import { toast } from "sonner";
 import { BorderBeam } from "@/components/magicui/border-beam";
+import { useCreateEvent } from "@/hooks/api/event/useCreateEvent";
 
 const page = () => {
-  const [popoverContent, setPopoverContent] = React.useState("");
   const { step, incrementStep, decrementStep } = useEventFormState();
   const methods = useForm<EventSchemaType>({
     mode: "onChange",
@@ -22,18 +20,12 @@ const page = () => {
     resolver: zodResolver(eventSchema),
   });
 
-  console.log("Current Step:", step);
-
   const renderStep = (step: number) => {
     switch (step) {
       case 1:
         return <EventFormStep1 />;
       case 2:
         return <EventFormStep2 />;
-      case 3:
-        return <EventFormStep3 />;
-      case 4:
-        return <EventFormStep4 />;
       default:
         return <EventFormStep1 />;
     }
@@ -49,17 +41,25 @@ const page = () => {
       let fieldsToValidate = [] as (keyof EventSchemaType)[];
 
       if (step === 1) {
-        // fieldsToValidate = [
-        //   "eventTitle",
-        //   "eventDescription",
-        //   "eventCategory",
-        //   "organizerName",
-        //   "organizerContactInfo",
-        //   "eventStartDate",
-        //   "eventEndDate",
-        // ];
+        fieldsToValidate = [
+          "eventTitle",
+          "eventDescription",
+          "eventCategory",
+          "eventVenue",
+          "eventLocation",
+          "eventStartDate",
+          "eventEndDate",
+        ];
       }
 
+      if (step === 2) {
+        fieldsToValidate = [
+          "ticketType",
+          "eventImage",
+          "ticketPrice",
+          "ticketQuantity",
+        ];
+      }
       if (fieldsToValidate.length > 0) {
         const isValid = await methods.trigger(fieldsToValidate);
 
@@ -83,12 +83,15 @@ const page = () => {
   };
 
   const handleDecrement = () => {
-    console.log("Handle decrement clicked, current step:", step);
     decrementStep();
   };
 
-  const handleSubmitEvent: SubmitHandler<EventSchemaType> = (data) => {
-    console.log("Form submitted with data:", data);
+  const handleSubmitEvent: SubmitHandler<EventSchemaType> = async (data) => {
+    try {
+      useCreateEvent(data);
+    } catch (error) {
+      console.error("Error submitting event:", error);
+    }
   };
 
   return (
@@ -130,9 +133,12 @@ const page = () => {
                   {step > 1 ? "Previous" : "Cancel"}
                 </Button>
                 <Button
-                  onClick={handleIncrement}
+                  onClick={
+                    step === 2 ? (handleSubmitEvent as any) : handleIncrement
+                  }
                   className="flex-1"
                   type={step === 2 ? "submit" : "button"}
+                  disabled={methods.formState.isSubmitting}
                 >
                   {step < 2 ? "Next" : "Submit"}
                 </Button>

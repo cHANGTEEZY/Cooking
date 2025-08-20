@@ -26,15 +26,21 @@ const eventSchema = z
       .min(10, "Event description must be at least 10 characters"),
 
     //Event Type
-    ticketType: z.enum(["free", "paid"]),
+    ticketType: z.enum(["Free", "Paid"]),
     ticketPrice: z.string().min(1, "Ticket price is required"),
     ticketQuantity: z.string().min(1, "Ticket quantity is required"),
-    eventImage: z
-      .instanceof(File)
-      .refine((file) =>
-        ["image/jpeg", "image/png", "image/jpg"].includes(file.type)
-      ),
-    eventVideo: z.string().url("Event video must be a valid URL").optional(),
+    eventImage: z.union([
+      z
+        .instanceof(File)
+        .refine(
+          (file) =>
+            ["image/jpeg", "image/png", "image/jpg"].includes(file.type),
+          {
+            message: "Only JPEG, PNG, and JPG images are allowed",
+          }
+        ),
+      z.any().optional(), // Allow any value initially, will be validated when file is selected
+    ]),
   })
   .refine(
     (data) => {

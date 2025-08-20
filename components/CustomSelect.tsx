@@ -1,4 +1,3 @@
-import { se } from "date-fns/locale";
 import { Label } from "./ui/label";
 import {
   Select,
@@ -7,6 +6,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./ui/select";
+import { cn } from "@/lib/utils";
 
 interface CustomSelectProps {
   error?: string;
@@ -25,7 +25,7 @@ const CustomSelect = ({
 }: CustomSelectProps) => {
   return (
     <div className="space-y-4 w-full ">
-      <Label>{label}</Label>
+      <Label className={cn(error ? "text-red-500" : "")}>{label}</Label>
       <Select value={value} onValueChange={onChange}>
         <SelectTrigger className="w-full h-80">
           <SelectValue placeholder="Select Event Category" />

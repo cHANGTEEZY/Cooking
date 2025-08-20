@@ -1,10 +1,13 @@
-import React from "react";
-import EventFormHeader from "./components/EventFormHeader";
+"use client";
+
 import CustomInput from "@/components/CustomInput";
 import { Controller, useFormContext } from "react-hook-form";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
 import { EventSchemaType } from "@/schema/event-schema";
-import CustomDropDown from "@/components/CustomDropDown";
 import CustomSelect from "@/components/CustomSelect";
+import EventFormHeader from "./components/EventFormHeader";
 
 const dropdownOptions = [
   { value: "Free", label: "Free" },
@@ -25,14 +28,56 @@ const EventFormStep2 = () => {
         eventdescription="Set ticket types, prices, availability, and discount options for attendees."
       />
       <div className="mt-8 space-y-6">
-        <CustomSelect label="Ticket Type" selectContents={dropdownOptions} />
+        <Controller
+          name="ticketType"
+          control={control}
+          render={({ field }) => (
+            <CustomSelect
+              {...field}
+              label="Ticket Type"
+              selectContents={dropdownOptions}
+              error={errors.ticketType?.message}
+            />
+          )}
+        />
 
-        <CustomInput
-          {...register("eventImage")}
-          inputType="file"
-          label="Upload Event Banner"
-          placeholder="Enter Event Banner Image"
-          error={errors.eventImage?.message}
+        <Controller
+          name="eventImage"
+          control={control}
+          render={({ field: { onChange, value, ...field } }) => {
+            return (
+              <div className="space-y-4">
+                <Label className={errors.eventImage && "text-red-500"}>
+                  Upload Event Banner
+                </Label>
+                <div
+                  className={cn(
+                    "flex items-center rounded-lg border-2 border-border/60 bg-background/50 dark:bg-card/40 backdrop-blur-sm shadow-md transition-all duration-200",
+                    errors.eventImage && "border-red-500"
+                  )}
+                >
+                  <Input
+                    type="file"
+                    className="border-0 bg-transparent p-2 focus-visible:ring-0 shadow-none"
+                    placeholder="Enter Event Banner Image"
+                    accept="image/jpeg,image/png,image/jpg"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) {
+                        onChange(file);
+                      }
+                    }}
+                    {...field}
+                  />
+                </div>
+                {errors.eventImage && (
+                  <p className="text-red-500">
+                    {errors.eventImage.message as string}
+                  </p>
+                )}
+              </div>
+            );
+          }}
         />
 
         <CustomInput

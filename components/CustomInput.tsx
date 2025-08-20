@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { Label } from "./ui/label";
 import { Input } from "./ui/input";
 import { cn } from "@/lib/utils";
@@ -33,8 +33,6 @@ const CustomInput = ({
   icon,
   ...rest
 }: CustomInputProps) => {
-  const [selectedImage, setSelectedImage] = useState<File | null>(null);
-
   return (
     <div className={cn("space-y-4", containerStyle)}>
       {label && (

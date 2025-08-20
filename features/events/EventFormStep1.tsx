@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import EventFormHeader from "./components/EventFormHeader";
 import CustomInput from "@/components/CustomInput";
