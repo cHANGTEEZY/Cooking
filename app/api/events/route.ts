@@ -2,7 +2,8 @@ import eventSchema from "@/schema/event-schema";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest, response: NextResponse) {
-  const { data, success } = eventSchema.safeParse(request.json());
+  const body = console.log("Request body:", await request.json());
+  const { data, success } = eventSchema.safeParse(body);
 
   console.log("Parsed event data:", JSON.stringify(data, null, 2));
 

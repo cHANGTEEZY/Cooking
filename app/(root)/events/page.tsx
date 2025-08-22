@@ -11,9 +11,12 @@ import eventSchema, { EventSchemaType } from "@/schema/event-schema";
 import { toast } from "sonner";
 import { BorderBeam } from "@/components/magicui/border-beam";
 import { useCreateEvent } from "@/hooks/api/event/useCreateEvent";
+import { useAuth } from "@clerk/nextjs";
 
 const page = () => {
   const { step, incrementStep, decrementStep } = useEventFormState();
+  const { getToken } = useAuth();
+
   const methods = useForm<EventSchemaType>({
     mode: "onChange",
     reValidateMode: "onChange",
@@ -86,9 +89,12 @@ const page = () => {
     decrementStep();
   };
 
+  const createEventMutation = useCreateEvent();
+
   const handleSubmitEvent: SubmitHandler<EventSchemaType> = async (data) => {
     try {
-      useCreateEvent(data);
+      const token = await getToken();
+      createEventMutation.mutate({ data, token: token! });
     } catch (error) {
       console.error("Error submitting event:", error);
     }

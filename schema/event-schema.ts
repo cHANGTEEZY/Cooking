@@ -29,18 +29,20 @@ const eventSchema = z
     ticketType: z.enum(["Free", "Paid"]),
     ticketPrice: z.string().min(1, "Ticket price is required"),
     ticketQuantity: z.string().min(1, "Ticket quantity is required"),
-    eventImage: z.union([
-      z
-        .instanceof(File)
-        .refine(
-          (file) =>
-            ["image/jpeg", "image/png", "image/jpg"].includes(file.type),
-          {
-            message: "Only JPEG, PNG, and JPG images are allowed",
-          }
-        ),
-      z.any().optional(), // Allow any value initially, will be validated when file is selected
-    ]),
+    eventImage: z
+      .union([
+        z
+          .instanceof(File)
+          .refine(
+            (file) =>
+              ["image/jpeg", "image/png", "image/jpg"].includes(file.type),
+            {
+              message: "Only JPEG, PNG, and JPG images are allowed",
+            }
+          ),
+        z.any().optional(),
+      ])
+      .optional(),
   })
   .refine(
     (data) => {
