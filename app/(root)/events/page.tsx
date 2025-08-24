@@ -94,7 +94,19 @@ const page = () => {
   const handleSubmitEvent: SubmitHandler<EventSchemaType> = async (data) => {
     try {
       const token = await getToken();
-      createEventMutation.mutate({ data, token: token! });
+      const formData = new FormData();
+
+      Object.entries(data).forEach(([key, value]) => {
+        if (key === "eventImage" && value) {
+          formData.append(key, value as File);
+        } else if (value instanceof Date) {
+          formData.append(key, value.toISOString());
+        } else {
+          formData.append(key, value as string);
+        }
+      });
+
+      createEventMutation.mutate({ data: formData, token: token! });
     } catch (error) {
       console.error("Error submitting event:", error);
     }
@@ -140,7 +152,9 @@ const page = () => {
                 </Button>
                 <Button
                   onClick={
-                    step === 2 ? (handleSubmitEvent as any) : handleIncrement
+                    step === 2
+                      ? methods.handleSubmit(handleSubmitEvent)
+                      : handleIncrement
                   }
                   className="flex-1"
                   type={step === 2 ? "submit" : "button"}

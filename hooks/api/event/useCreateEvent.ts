@@ -5,13 +5,7 @@ import { toast } from "sonner";
 
 export const useCreateEvent = () => {
   return useMutation({
-    mutationFn: async ({
-      data,
-      token,
-    }: {
-      data: EventSchemaType;
-      token: string;
-    }) => {
+    mutationFn: async ({ data, token }: { data: FormData; token: string }) => {
       if (!token) throw new Error("Authentication token is missing");
       const response = await api.post("/api/events", data, token);
       return response;
