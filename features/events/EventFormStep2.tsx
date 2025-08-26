@@ -18,8 +18,11 @@ const EventFormStep2 = () => {
   const {
     control,
     register,
+    watch,
     formState: { errors },
   } = useFormContext<EventSchemaType>();
+
+  const ticketType = watch("ticketType");
 
   return (
     <section>
@@ -80,14 +83,17 @@ const EventFormStep2 = () => {
           }}
         />
 
-        <CustomInput
-          {...register("ticketPrice")}
-          inputType="text"
-          label="Ticket Price"
-          error={errors.ticketPrice?.message}
-          placeholder="Enter ticket price"
-          containerStyle="flex-1/2"
-        />
+        {ticketType === "Paid" ? (
+          <CustomInput
+            {...register("ticketPrice")}
+            inputType="text"
+            label="Ticket Price"
+            error={errors.ticketPrice?.message}
+            placeholder="Enter ticket price"
+          />
+        ) : (
+          <></>
+        )}
 
         <CustomInput
           {...register("ticketQuantity")}
@@ -95,7 +101,6 @@ const EventFormStep2 = () => {
           label="Ticket Quantity"
           error={errors.ticketQuantity?.message}
           placeholder="Enter total ticket quantity"
-          containerStyle="flex-1/2"
         />
       </div>
     </section>

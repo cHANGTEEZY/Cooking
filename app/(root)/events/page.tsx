@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import EventFormStep1 from "@/features/events/EventFormStep1";
 import EventFormStep2 from "@/features/events/EventFormStep2";
@@ -20,6 +20,9 @@ const page = () => {
   const methods = useForm<EventSchemaType>({
     mode: "onChange",
     reValidateMode: "onChange",
+    defaultValues: {
+      ticketType: "Free",
+    },
     resolver: zodResolver(eventSchema),
   });
 
@@ -55,14 +58,19 @@ const page = () => {
         ];
       }
 
-      if (step === 2) {
+      const ticketType = methods.getValues("ticketType");
+
+      if (step === 2 && ticketType === "Paid") {
         fieldsToValidate = [
           "ticketType",
           "eventImage",
           "ticketPrice",
           "ticketQuantity",
         ];
+      } else if (step === 2 && ticketType === "Free") {
+        fieldsToValidate = ["ticketType", "eventImage", "ticketQuantity"];
       }
+
       if (fieldsToValidate.length > 0) {
         const isValid = await methods.trigger(fieldsToValidate);
 
@@ -158,7 +166,10 @@ const page = () => {
                   }
                   className="flex-1"
                   type={step === 2 ? "submit" : "button"}
-                  disabled={methods.formState.isSubmitting}
+                  disabled={
+                    methods.formState.isSubmitting ||
+                    createEventMutation.isPending
+                  }
                 >
                   {step < 2 ? "Next" : "Submit"}
                 </Button>

@@ -1,8 +1,39 @@
 import eventSchema from "@/schema/event-schema";
 import { NextRequest, NextResponse } from "next/server";
+import { v2 as cloudinary } from "cloudinary";
+import { sql } from "@/lib/db";
+import { verifyToken } from "@clerk/nextjs/server";
+
+cloudinary.config({
+  cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
 export async function POST(request: NextRequest) {
   try {
+    const authHeader = request.headers.get("Authorization");
+    if (!authHeader) {
+      return NextResponse.json(
+        {
+          message: "Unauthorized",
+        },
+        {
+          status: 401,
+          statusText: "You are not authorized to perform this action",
+        }
+      );
+    }
+
+    const token = authHeader.split(" ")[1];
+    console.log("token is", token);
+
+    const { sub: userId } = await verifyToken(token, {
+      secretKey: process.env.CLERK_SECRET_KEY!,
+    });
+
+    console.log("Authenticated userid is ", userId);
+
     const formData = await request.formData();
     console.log("Request body:", formData);
 
@@ -35,8 +66,41 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Here you would typically save the event to a database
-    // For now, we'll just return success
+    const bannerImage = formData.get("eventImage") as File;
+
+    console.log("Stored image is ", bannerImage);
+
+    // Convert File to buffer for Cloudinary upload
+    const arrayBuffer = await bannerImage.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
+
+    const cloudinaryResult = await cloudinary.uploader.upload(
+      `data:${bannerImage.type};base64,${buffer.toString("base64")}`,
+      {
+        folder: "event-banners",
+      }
+    );
+
+    const cloudinaryImageUrl = cloudinaryResult.secure_url;
+    console.log("Retrieved image url is", cloudinaryImageUrl);
+
+    const uploadEvents =
+      await sql`INSERT INTO events (event_title, event_description, event_category , event_start_date, event_end_date, ticket_type, banner_image_url, ticket_price,ticket_quantity,event_creator)
+      VALUES (${result.data.eventTitle}, ${result.data.eventDescription}, ${result.data.eventCategory} ,${result.data.eventStartDate}, ${result.data.eventEndDate}, ${result.data.ticketType}, ${cloudinaryImageUrl},
+       ${result.data.ticketPrice}, ${result.data.ticketQuantity}, ${userId})
+      RETURNING *
+    `;
+
+    if (uploadEvents.length === 0) {
+      return NextResponse.json(
+        {
+          message: "Error creating event",
+        },
+        {
+          status: 500,
+        }
+      );
+    }
 
     return NextResponse.json(
       {
