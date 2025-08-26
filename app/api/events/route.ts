@@ -123,3 +123,23 @@ export async function POST(request: NextRequest) {
     );
   }
 }
+
+export async function GET(request: NextRequest, response: NextResponse) {
+  try {
+    const events = await sql`SELECT * FROM events`;
+
+    return NextResponse.json(events, {
+      status: 200,
+    });
+  } catch (error) {
+    console.error("Error fetching events:", error);
+    return NextResponse.json(
+      {
+        message: "Server error fetching events",
+      },
+      {
+        status: 500,
+      }
+    );
+  }
+}
