@@ -85,9 +85,9 @@ export async function POST(request: NextRequest) {
     console.log("Retrieved image url is", cloudinaryImageUrl);
 
     const uploadEvents =
-      await sql`INSERT INTO events (event_title, event_description, event_category , event_start_date, event_end_date, ticket_type, banner_image_url, ticket_price,ticket_quantity,event_creator)
+      await sql`INSERT INTO events (event_title, event_description, event_category , event_start_date, event_end_date, ticket_type, banner_image_url, ticket_price,ticket_quantity,event_creator,event_venue,event_location)
       VALUES (${result.data.eventTitle}, ${result.data.eventDescription}, ${result.data.eventCategory} ,${result.data.eventStartDate}, ${result.data.eventEndDate}, ${result.data.ticketType}, ${cloudinaryImageUrl},
-       ${result.data.ticketPrice}, ${result.data.ticketQuantity}, ${userId})
+       ${result.data.ticketPrice}, ${result.data.ticketQuantity}, ${userId}, ${result.data.eventVenue}, ${result.data.eventLocation})
       RETURNING *
     `;
 

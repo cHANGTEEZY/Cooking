@@ -5,7 +5,7 @@ const eventSchema = z
     eventTitle: z
       .string()
       .min(4, "Event title must be at least 4 characters")
-      .max(20, "Event title must be max of 20 characters"),
+      .max(80, "Event title must be max of 20 characters"),
     eventCategory: z.enum([
       "Music",
       "Festival",

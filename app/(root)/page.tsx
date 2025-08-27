@@ -1,8 +1,9 @@
 "use client";
 
+import { EventCard } from "@/components/EventFeedCard";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import { useGetEvents } from "@/hooks/api/event/useGetEvents";
-import Image from "next/image";
+import { useRouter } from "next/router";
 import React from "react";
 
 const page = () => {
@@ -12,23 +13,24 @@ const page = () => {
     return <LoadingSpinner />;
   }
 
-  return (
-    <div>
-      <h1>All Events</h1>
+  if (!events || events.length === 0) {
+    return (
+      <div className="text-4xl flex items-center justify-center h-screen w-screen">
+        No events yet !!!
+      </div>
+    );
+  }
 
-      {events?.map((event: any) => (
-        <div key={event.id}>
-          <h2>{event.event_title}</h2>
-          <p>{event.event_description}</p>
-          <Image
-            src={event.banner_image_url}
-            height={200}
-            width={200}
-            alt="Event banner image"
-          />
-        </div>
-      ))}
-    </div>
+  return (
+    <section>
+      <h1 className="text-center text-4xl font-extrabold my-10">All Events</h1>
+
+      <section className=" mx-auto space-y-4 gap-4  px-3">
+        {events?.map((event: any) => (
+          <EventCard key={event.id} eventData={event} />
+        ))}
+      </section>
+    </section>
   );
 };
 
