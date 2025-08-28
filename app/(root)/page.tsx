@@ -3,7 +3,6 @@
 import { EventCard } from "@/components/EventFeedCard";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import { useGetEvents } from "@/hooks/api/event/useGetEvents";
-import { useRouter } from "next/router";
 import React from "react";
 
 const page = () => {

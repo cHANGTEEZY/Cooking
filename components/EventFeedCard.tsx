@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Card,
   CardContent,
@@ -17,7 +19,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import { useUser } from "@clerk/nextjs";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 
 interface EventData {
   id: string;
@@ -44,6 +46,7 @@ interface EventCardProps {
 
 export function EventCard({ eventData }: EventCardProps) {
   const { user } = useUser();
+  const router = useRouter();
 
   const formatDateRange = (startDate: string, endDate: string) => {
     const start = new Date(startDate);
@@ -89,7 +92,7 @@ export function EventCard({ eventData }: EventCardProps) {
   };
 
   const handleTicketClick = (eventData: EventData) => {
-    console.log("Ticket clicked", eventData);
+    router.push("/events/event-details/" + eventData.id);
   };
 
   return (
@@ -222,7 +225,7 @@ export function EventCard({ eventData }: EventCardProps) {
               )}
           </CardContent>
 
-          <CardFooter className="pt-3 flex justify-between items-center border-t bg-muted/20">
+          <CardFooter className="pt-3 flex justify-between items-center border-t ">
             <div className="flex gap-2">
               <Badge
                 variant={
@@ -238,7 +241,7 @@ export function EventCard({ eventData }: EventCardProps) {
             </div>
             <Button
               onClick={() => handleTicketClick(eventData)}
-              className="rounded-full px-6 py-2 font-semibold transition-all duration-300 transform hover:scale-105"
+              className="rounded-full px-6 py-2 font-semibold transition-all duration-300 transform hover:scale-105 bg-primary/80 hover:bg-primary"
             >
               Get Tickets
             </Button>
