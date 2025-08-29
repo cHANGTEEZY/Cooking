@@ -92,7 +92,11 @@ export function EventCard({ eventData }: EventCardProps) {
   };
 
   const handleTicketClick = (eventData: EventData) => {
-    router.push("/events/event-details/" + eventData.id);
+    router.push(
+      `/events/event-details/${eventData.id}?data=${encodeURIComponent(
+        JSON.stringify(eventData)
+      )}`
+    );
   };
 
   return (

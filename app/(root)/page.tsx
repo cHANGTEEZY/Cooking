@@ -20,12 +20,24 @@ const page = () => {
     );
   }
 
+  const eventsList = Array.isArray(events)
+    ? events
+    : (events as any)?.data || (events as any)?.events || [];
+
+  if (eventsList.length === 0) {
+    return (
+      <div className="text-4xl flex items-center justify-center h-screen w-screen">
+        No events yet !!!
+      </div>
+    );
+  }
+
   return (
     <section>
       <h1 className="text-center text-4xl font-extrabold my-10">All Events</h1>
 
       <section className=" mx-auto space-y-4 gap-4  px-3">
-        {events?.map((event: any) => (
+        {eventsList?.map((event: any) => (
           <EventCard key={event.id} eventData={event} />
         ))}
       </section>

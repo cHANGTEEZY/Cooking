@@ -128,6 +128,10 @@ export async function GET(request: NextRequest, response: NextResponse) {
   try {
     const events = await sql`SELECT * FROM events`;
 
+    console.log("Raw events data:", events);
+    console.log("Events type:", typeof events);
+    console.log("Is array:", Array.isArray(events));
+
     return NextResponse.json(events, {
       status: 200,
     });
