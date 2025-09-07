@@ -1,5 +1,4 @@
 "use client";
-
 import CustomInput from "@/components/CustomInput";
 import { Controller, useFormContext } from "react-hook-form";
 import { Label } from "@/components/ui/label";
@@ -8,6 +7,12 @@ import { cn } from "@/lib/utils";
 import { EventSchemaType } from "@/schema/event-schema";
 import CustomSelect from "@/components/CustomSelect";
 import EventFormHeader from "./components/EventFormHeader";
+import {
+  compressImage,
+  validateImageFile,
+  formatFileSize,
+} from "@/lib/image-compression";
+import { useState } from "react";
 
 const dropdownOptions = [
   { value: "Free", label: "Free" },
@@ -18,11 +23,36 @@ const EventFormStep2 = () => {
   const {
     control,
     register,
-    watch,
     formState: { errors },
   } = useFormContext<EventSchemaType>();
 
-  const ticketType = watch("ticketType");
+  const [isCompressing, setIsCompressing] = useState(false);
+
+  const handleImageCompression = async (file: File): Promise<File> => {
+    try {
+      setIsCompressing(true);
+
+      const validation = validateImageFile(file);
+      if (!validation.isValid) {
+        console.error(validation.error);
+        return file;
+      }
+
+      const compressedFile = await compressImage(file, {
+        maxSizeMB: 1,
+        maxWidthOrHeight: 1920,
+        useWebWorker: true,
+        initialQuality: 0.8,
+      });
+
+      return compressedFile;
+    } catch (error) {
+      console.error("Error processing image:", error);
+      return file;
+    } finally {
+      setIsCompressing(false);
+    }
+  };
 
   return (
     <section>
@@ -52,22 +82,32 @@ const EventFormStep2 = () => {
               <div className="space-y-4">
                 <Label className={errors.eventImage && "text-red-500"}>
                   Upload Event Banner
+                  {isCompressing && (
+                    <span className="ml-2 text-sm text-blue-500">
+                      (Compressing...)
+                    </span>
+                  )}
                 </Label>
                 <div
                   className={cn(
                     "flex items-center rounded-lg border-2 border-border/60 bg-background/50 dark:bg-card/40 backdrop-blur-sm shadow-md transition-all duration-200",
-                    errors.eventImage && "border-red-500"
+                    errors.eventImage && "border-red-500",
+                    isCompressing && "opacity-50 pointer-events-none"
                   )}
                 >
                   <Input
                     type="file"
                     className="border-0 bg-transparent p-2 focus-visible:ring-0 shadow-none"
                     placeholder="Enter Event Banner Image"
-                    accept="image/jpeg,image/png,image/jpg"
-                    onChange={(e) => {
+                    accept="image/jpeg,image/png,image/jpg,image/webp"
+                    disabled={isCompressing}
+                    onChange={async (e) => {
                       const file = e.target.files?.[0];
                       if (file) {
-                        onChange(file);
+                        const compressedFile = await handleImageCompression(
+                          file
+                        );
+                        onChange(compressedFile);
                       }
                     }}
                     {...field}
@@ -78,22 +118,24 @@ const EventFormStep2 = () => {
                     {errors.eventImage.message as string}
                   </p>
                 )}
+                {value && (
+                  <div className="text-sm text-gray-600">
+                    Selected: {value.name} ({formatFileSize(value.size)})
+                  </div>
+                )}
               </div>
             );
           }}
         />
 
-        {ticketType === "Paid" ? (
-          <CustomInput
-            {...register("ticketPrice")}
-            inputType="text"
-            label="Ticket Price"
-            error={errors.ticketPrice?.message}
-            placeholder="Enter ticket price"
-          />
-        ) : (
-          <></>
-        )}
+        <CustomInput
+          {...register("ticketPrice")}
+          inputType="text"
+          label="Ticket Price"
+          error={errors.ticketPrice?.message}
+          placeholder="Enter ticket price"
+          containerStyle="flex-1/2"
+        />
 
         <CustomInput
           {...register("ticketQuantity")}
@@ -101,6 +143,7 @@ const EventFormStep2 = () => {
           label="Ticket Quantity"
           error={errors.ticketQuantity?.message}
           placeholder="Enter total ticket quantity"
+          containerStyle="flex-1/2"
         />
       </div>
     </section>

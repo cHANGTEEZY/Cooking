@@ -11,27 +11,7 @@ const EventDetailsPage = () => {
 
   const encodedData = searchParams.get("data");
 
-  // Sample data for demonstration - replace with actual data parsing
-  const eventData = {
-    id: "c8bd4592-4cc6-44cb-81c4-c7a4d149cba4",
-    event_title: "Tech Summit Kathmandu 2025",
-    event_description:
-      "Join industry leaders and innovators for a two-day summit covering AI, blockchain, cloud computing, and the future of technology in South Asia.",
-    event_category: "Conference",
-    event_venue: "Soaltee Hotel Kathmandu",
-    event_location: "Kathmandu, Nepal",
-    event_start_date: "2025-08-27T18:15:00.000Z",
-    event_end_date: "2025-08-28T18:15:00.000Z",
-    ticket_type: "Paid",
-    banner_image_url:
-      "https://res.cloudinary.com/dpq9kytd1/image/upload/v1756283941/event-banners/oliehxtipwvwrs8tjczi.jpg",
-    ticket_price: "20",
-    ticket_quantity: "400",
-    event_creator: "user_3183NUsVnlpBNwi3hf7GASCufc4",
-  };
-
-  // Parse actual data if available
-  let actualEventData = eventData;
+  let actualEventData;
   if (encodedData) {
     try {
       actualEventData = JSON.parse(decodeURIComponent(encodedData));
@@ -203,19 +183,6 @@ const EventDetailsPage = () => {
                 <div className="prose prose-gray max-w-none">
                   <p className="text-muted-foreground leading-relaxed mb-4">
                     {actualEventData.event_description}
-                  </p>
-                  <p className="text-muted-foreground leading-relaxed mb-4">
-                    This premier technology conference brings together thought
-                    leaders, innovators, and professionals from across South
-                    Asia to explore the latest trends and developments in
-                    artificial intelligence, blockchain technology, and cloud
-                    computing.
-                  </p>
-                  <p className="text-muted-foreground leading-relaxed">
-                    Network with industry experts, attend hands-on workshops,
-                    and gain insights that will shape the future of technology
-                    in the region. Don't miss this opportunity to be part of the
-                    conversation that's defining tomorrow's digital landscape.
                   </p>
                 </div>
               </CardContent>

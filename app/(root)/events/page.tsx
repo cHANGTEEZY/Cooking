@@ -143,7 +143,7 @@ const page = () => {
               size={400}
               duration={7}
               borderWidth={2}
-              className="from-transparent via-red-500 to-transparent"
+              className="from-transparent via-blue-500 to-transparent"
             />
             <form onSubmit={methods.handleSubmit(handleSubmitEvent)}>
               {renderStep(step)}
