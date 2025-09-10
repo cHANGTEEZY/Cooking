@@ -2,6 +2,7 @@
 
 import { EventCard } from "@/components/EventFeedCard";
 import LoadingSpinner from "@/components/LoadingSpinner";
+import Navigation from "@/components/Navigation";
 import { useGetEvents } from "@/hooks/api/event/useGetEvents";
 import React from "react";
 
@@ -33,15 +34,19 @@ const page = () => {
   }
 
   return (
-    <section>
-      <h1 className="text-center text-4xl font-extrabold my-10">All Events</h1>
-
-      <section className=" mx-auto space-y-4 gap-4  px-3">
-        {eventsList?.map((event: any) => (
-          <EventCard key={event.id} eventData={event} />
-        ))}
+    <>
+      <Navigation />
+      <section>
+        <h1 className="text-center text-4xl font-extrabold my-10">
+          All Events
+        </h1>
+        <section className=" mx-auto space-y-4 gap-4  px-3">
+          {eventsList?.map((event: any) => (
+            <EventCard key={event.id} eventData={event} />
+          ))}
+        </section>
       </section>
-    </section>
+    </>
   );
 };
 
