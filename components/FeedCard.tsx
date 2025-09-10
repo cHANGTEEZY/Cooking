@@ -7,7 +7,7 @@ import {
   CardFooter,
   CardContent,
 } from "./ui/card";
-import { FeedCardData } from "@/app/page";
+import { FeedCardData } from "@/types";
 import { Calendar, MapPin, DollarSign, Heart, Share2 } from "lucide-react";
 import { Button } from "./ui/button";
 

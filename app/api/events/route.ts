@@ -124,7 +124,7 @@ export async function POST(request: NextRequest) {
   }
 }
 
-export async function GET(request: NextRequest, response: NextResponse) {
+export async function GET(request: NextRequest) {
   try {
     const events = await sql`SELECT * FROM events`;
 
